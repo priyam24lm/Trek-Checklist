@@ -319,7 +319,7 @@
 
 <div class="header">
   <div class="header-top">
-    <div class="trip-label">AMS TREK</div>
+    <div class="trip-label">HAMPTA PASS Trek</div>
     <div class="trip-sub">Travel Checklist</div>
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
@@ -583,15 +583,15 @@ function resetAll() {
 
 function saveToStorage() {
   try {
-    localStorage.setItem('ams-state', JSON.stringify(state));
-    localStorage.setItem('ams-notes', JSON.stringify(notes));
+    localStorage.setItem('hampta-pass-state', JSON.stringify(state));
+    localStorage.setItem('hampta-pass-notes', JSON.stringify(notes));
   } catch(e) {}
 }
 
 function loadFromStorage() {
   try {
-    const s = localStorage.getItem('ams-state');
-    const n = localStorage.getItem('ams-notes');
+    const s = localStorage.getItem('hampta-pass-state');
+    const n = localStorage.getItem('hampta-pass-notes');
     if (s) Object.assign(state, JSON.parse(s));
     if (n) Object.assign(notes, JSON.parse(n));
   } catch(e) {}
@@ -602,7 +602,7 @@ function exportSave() {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'ams-trek-progress.json';
+  a.download = 'hampta-pass-trek-progress.json';
   a.click();
   showToast('✓ Progress saved!');
 }
@@ -651,7 +651,7 @@ function showToast(msg, isError = false) {
 
 function exportSummary() {
   const cats = Object.keys(data);
-  let lines = ['AMS TREK — PACKING SUMMARY', '='.repeat(40), ''];
+  let lines = ['HAMPTA PASS Trek — PACKING SUMMARY', '='.repeat(40), ''];
   cats.forEach(cat => {
     const label = cat.charAt(0).toUpperCase() + cat.slice(1);
     lines.push(`[ ${label.toUpperCase()} ]`);
@@ -666,7 +666,7 @@ function exportSummary() {
   const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'ams-trek-checklist.txt';
+  a.download = 'hampta-pass-trek-checklist.txt';
   a.click();
 }
 
