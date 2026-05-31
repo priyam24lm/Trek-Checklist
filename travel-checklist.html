@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAMPTA PASS Trek Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --card: #1a1916;
+    --card2: #211f1b;
+    --border: #2e2b25;
+    --accent: #e8a320;
+    --accent2: #c45c1a;
+    --green: #4caf7d;
+    --text: #e8e3d8;
+    --muted: #7a7468;
+    --red: #e05252;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a1410 0%, #0f0e0c 60%);
+    border-bottom: 2px solid var(--accent);
+    padding: 32px 24px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .trip-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .trip-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+  }
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 2px;
+    height: 4px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+  .progress-text span { color: var(--accent); font-weight: 500; }
+
+  /* Nav tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 24px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn .badge {
+    background: var(--accent2);
+    color: white;
+    font-size: 9px;
+    border-radius: 10px;
+    padding: 1px 5px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tab-btn .badge.done { background: var(--green); }
+
+  /* Sections */
+  .section { display: none; padding: 20px 16px; max-width: 720px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* AMS Tips */
+  .tips-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .tip-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .tip-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 24px;
+  }
+  .tip-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    padding-top: 2px;
+  }
+
+  /* Section heading */
+  .sec-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sec-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Checklist items */
+  .checklist { display: flex; flex-direction: column; gap: 8px; }
+
+  .item-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s, opacity 0.3s;
+  }
+  .item-card.checked {
+    opacity: 0.6;
+    border-color: var(--green);
+    background: #161c18;
+  }
+
+  .item-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+
+  .item-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .item-card.checked .item-checkbox {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .checkmark {
+    display: none;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .item-card.checked .checkmark { display: block; }
+
+  .item-label {
+    font-size: 14px;
+    font-weight: 400;
+    flex: 1;
+    line-height: 1.4;
+  }
+  .item-card.checked .item-label {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .item-note-toggle {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .item-note-toggle:hover { color: var(--accent); background: var(--card2); }
+  .item-note-toggle.has-note { color: var(--accent); }
+
+  .item-note-area {
+    display: none;
+    padding: 0 14px 12px 48px;
+  }
+  .item-note-area.open { display: block; }
+  .item-note-area textarea {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 8px 10px;
+    resize: none;
+    min-height: 56px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .item-note-area textarea::placeholder { color: var(--muted); }
+  .item-note-area textarea:focus { border-color: var(--accent); }
+
+  /* Reset/export bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-outline:hover { border-color: var(--red); color: var(--red); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-accent {
+    background: var(--accent);
+    color: #0f0e0c;
+    font-weight: 600;
+  }
+  .btn-accent:hover { background: var(--accent2); color: white; }
+
+  .category-gap { margin-top: 24px; }
+
+  @media (max-width: 480px) {
+    .trip-label { font-size: 42px; }
+    .tab-btn { padding: 12px 14px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="trip-label">AMS TREK</div>
+    <div class="trip-sub">Travel Checklist</div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+  <div class="progress-text" id="progressText">0 / 0 items completed</div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('ams', this)">⚠ AMS Tips</button>
+  <button class="tab-btn" onclick="showTab('docs', this)">📄 Documents <span class="badge" id="badge-docs">5</span></button>
+  <button class="tab-btn" onclick="showTab('meds', this)">💊 Medicines <span class="badge" id="badge-meds">13</span></button>
+  <button class="tab-btn" onclick="showTab('toiletries', this)">🧴 Toiletries <span class="badge" id="badge-toiletries">13</span></button>
+  <button class="tab-btn" onclick="showTab('clothes', this)">👕 Clothes <span class="badge" id="badge-clothes">21</span></button>
+  <button class="tab-btn" onclick="showTab('food', this)">🍫 Food <span class="badge" id="badge-food">3</span></button>
+  <button class="tab-btn" onclick="showTab('must', this)">⭐ Must Have <span class="badge" id="badge-must">4</span></button>
+</div>
+
+<!-- AMS Tips -->
+<div class="section active" id="tab-ams">
+  <div class="sec-heading">AMS Advisory Tips</div>
+  <div class="tips-grid">
+    <div class="tip-card"><div class="tip-num">1</div><div class="tip-text"><strong>Not suggested</strong> — Diamox (avoid unless prescribed)</div></div>
+    <div class="tip-card"><div class="tip-num">2</div><div class="tip-text"><strong>Keep drinking water</strong> — stay hydrated throughout</div></div>
+    <div class="tip-card"><div class="tip-num">3</div><div class="tip-text"><strong>Climb high, sleep slow</strong> — acclimatize properly</div></div>
+    <div class="tip-card"><div class="tip-num">4</div><div class="tip-text"><strong>Walk slow and continuous</strong> — maintain steady pace</div></div>
+    <div class="tip-card"><div class="tip-num">5</div><div class="tip-text"><strong>Don't sleep in afternoon</strong> — it worsens AMS symptoms</div></div>
+  </div>
+</div>
+
+<!-- Documents -->
+<div class="section" id="tab-docs">
+  <div class="sec-heading">Documents</div>
+  <div class="checklist" id="list-docs"></div>
+</div>
+
+<!-- Medicines -->
+<div class="section" id="tab-meds">
+  <div class="sec-heading">Medicines</div>
+  <div class="checklist" id="list-meds"></div>
+</div>
+
+<!-- Toiletries -->
+<div class="section" id="tab-toiletries">
+  <div class="sec-heading">Toiletries</div>
+  <div class="checklist" id="list-toiletries"></div>
+</div>
+
+<!-- Clothes -->
+<div class="section" id="tab-clothes">
+  <div class="sec-heading">Clothes (Minimum)</div>
+  <div class="checklist" id="list-clothes"></div>
+</div>
+
+<!-- Food -->
+<div class="section" id="tab-food">
+  <div class="sec-heading">Food</div>
+  <div class="checklist" id="list-food"></div>
+</div>
+
+<!-- Must Have -->
+<div class="section" id="tab-must">
+  <div class="sec-heading">Must Have</div>
+  <div class="checklist" id="list-must"></div>
+</div>
+
+<div class="bottom-bar">
+  <button class="btn btn-outline" onclick="resetAll()">↺ Reset</button>
+  <button class="btn btn-outline" onclick="triggerImport()">↑ Import</button>
+  <button class="btn btn-accent" onclick="exportSave()">↓ Save</button>
+  <button class="btn btn-ghost" onclick="exportSummary()">📄 TXT</button>
+</div>
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="importSave(event)">
+
+<!-- Toast -->
+<div id="toast" style="
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:#4caf7d; color:#fff; font-family:'DM Mono',monospace; font-size:12px;
+  letter-spacing:1px; padding:10px 20px; border-radius:6px; opacity:0;
+  transition: opacity 0.3s, transform 0.3s; pointer-events:none; z-index:999;
+">Saved!</div>
+
+<script>
+const data = {
+  docs: [
+    "3 copies of Aadhaar Card",
+    "Signed Medical Certificate",
+    "Signed form by us",
+    "3 Passport copies",
+    "Insurance"
+  ],
+  meds: [
+    "Painkillers",
+    "Avomine",
+    "ORS",
+    "Cotton",
+    "Crepe Bandage",
+    "Band-Aid",
+    "Move",
+    "Knee Cap",
+    "Blister Patch",
+    "Regular Medicine",
+    "Water Purification Tablets",
+    "Camphor",
+    "Putli",
+	"Sorse Gel",
+	"Video Toffee"
+  ],
+  toiletries: [
+    "Sunscreen Cream",
+    "Moisturizer",
+    "Body Lotion",
+    "Toilet Paper",
+	"Wet Wipes",
+    "Lip Balm",
+    "Hand Sanitizer",
+    "Antibacterial Powder",
+    "Toothbrush + Toothpaste",
+    "Quick Dry Towel",
+    "Soap / Shampoo",
+    "Deo",
+    "Powerbank",
+    "Boroline"
+  ],
+  clothes: [
+    "Sun Hat",
+    "Either Fleece Cap / Woolen Cap",
+    "2 Neck Covers",
+    "4 Quick Dry T-shirts (2 full, 2 half)",
+    "1 Woolen Fleece T-shirt",
+    "1 Woolen Fleece Jacket",
+    "1 Padded Jacket",
+    "1 Pair Thermal (Upper + Lower)",
+    "3–4 Trek Pants (3 quick dry, 1 warmer)",
+    "5 Pairs of Socks (7 pairs or more)",
+    "1 Woolen Sock",
+    "1 Pair of Gloves",
+    "1 Pair of Trekking Shoes + 1 Sandals",
+    "Rucksack with items in polybag (double protection) ≤ 11 kgs",
+    "Day Backpack",
+    "Trekking Poles",
+    "Side Cover / UV Glasses",
+    "Head Torch with Extra Batteries",
+    "1 Lunch Box",
+    "2 Water Bottles + 1 Thermos",
+    "1 Rain Poncho"
+  ],
+  food: [
+    "Protein Bars",
+    "Dry Fruits",
+    "Chocolate Bars"
+  ],
+  must: [
+    "Mobile Pouch",
+    "Odamos",
+    "Extra Polythene Bags",
+    "Zipped Bags"
+  ]
+};
+
+// State
+const state = {};
+const notes = {};
+
+function itemId(cat, idx) { return `${cat}__${idx}`; }
+
+function buildList(cat) {
+  const container = document.getElementById(`list-${cat}`);
+  data[cat].forEach((item, i) => {
+    const id = itemId(cat, i);
+    if (!(id in state)) state[id] = false;
+    if (!(id in notes)) notes[id] = '';
+
+    const card = document.createElement('div');
+    card.className = 'item-card' + (state[id] ? ' checked' : '');
+    card.id = `card-${id}`;
+
+    card.innerHTML = `
+      <div class="item-main" onclick="toggleCheck('${id}')">
+        <div class="item-checkbox">
+          <span class="checkmark">✓</span>
+        </div>
+        <div class="item-label">${item}</div>
+        <button class="item-note-toggle${notes[id] ? ' has-note' : ''}" 
+          onclick="event.stopPropagation(); toggleNote('${id}')" 
+          title="Add note" id="note-btn-${id}">✏</button>
+      </div>
+      <div class="item-note-area${notes[id] ? ' open' : ''}" id="note-area-${id}">
+        <textarea placeholder="Add notes here…" 
+          oninput="saveNote('${id}', this.value)"
+          id="note-input-${id}">${notes[id]}</textarea>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleCheck(id) {
+  state[id] = !state[id];
+  const card = document.getElementById(`card-${id}`);
+  card.classList.toggle('checked', state[id]);
+  saveToStorage();
+  updateProgress();
+}
+
+function toggleNote(id) {
+  const area = document.getElementById(`note-area-${id}`);
+  area.classList.toggle('open');
+  if (area.classList.contains('open')) {
+    setTimeout(() => document.getElementById(`note-input-${id}`).focus(), 50);
+  }
+}
+
+function saveNote(id, val) {
+  notes[id] = val;
+  const btn = document.getElementById(`note-btn-${id}`);
+  btn.classList.toggle('has-note', val.trim().length > 0);
+  saveToStorage();
+}
+
+function showTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+function updateProgress() {
+  const cats = Object.keys(data);
+  let total = 0, done = 0;
+  cats.forEach(cat => {
+    data[cat].forEach((_, i) => {
+      const id = itemId(cat, i);
+      total++;
+      if (state[id]) done++;
+    });
+    // update badges
+    const catDone = data[cat].filter((_, i) => state[itemId(cat, i)]).length;
+    const catTotal = data[cat].length;
+    const badge = document.getElementById(`badge-${cat}`);
+    if (badge) {
+      badge.textContent = catDone === catTotal ? '✓' : catTotal - catDone;
+      badge.className = 'badge' + (catDone === catTotal ? ' done' : '');
+    }
+  });
+  const pct = total ? (done / total * 100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').innerHTML = `<span>${done}</span> / ${total} items completed`;
+}
+
+function resetAll() {
+  if (!confirm('Reset all checkmarks and notes?')) return;
+  Object.keys(state).forEach(k => state[k] = false);
+  Object.keys(notes).forEach(k => notes[k] = '');
+  // re-render
+  Object.keys(data).forEach(cat => {
+    document.getElementById(`list-${cat}`).innerHTML = '';
+    buildList(cat);
+  });
+  updateProgress();
+  saveToStorage();
+}
+
+function saveToStorage() {
+  try {
+    localStorage.setItem('ams-state', JSON.stringify(state));
+    localStorage.setItem('ams-notes', JSON.stringify(notes));
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const s = localStorage.getItem('ams-state');
+    const n = localStorage.getItem('ams-notes');
+    if (s) Object.assign(state, JSON.parse(s));
+    if (n) Object.assign(notes, JSON.parse(n));
+  } catch(e) {}
+}
+
+function exportSave() {
+  const payload = { version: 1, state, notes };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ams-trek-progress.json';
+  a.click();
+  showToast('✓ Progress saved!');
+}
+
+function triggerImport() {
+  document.getElementById('importInput').click();
+}
+
+function importSave(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const payload = JSON.parse(e.target.result);
+      if (!payload.state || !payload.notes) throw new Error('Invalid file');
+      Object.assign(state, payload.state);
+      Object.assign(notes, payload.notes);
+      // re-render all lists
+      Object.keys(data).forEach(cat => {
+        document.getElementById(`list-${cat}`).innerHTML = '';
+        buildList(cat);
+      });
+      updateProgress();
+      showToast('✓ Progress restored!');
+    } catch(err) {
+      showToast('✗ Invalid file', true);
+    }
+  };
+  reader.readAsText(file);
+  // reset input so same file can be re-imported
+  event.target.value = '';
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? 'var(--red)' : 'var(--green)';
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2500);
+}
+
+function exportSummary() {
+  const cats = Object.keys(data);
+  let lines = ['AMS TREK — PACKING SUMMARY', '='.repeat(40), ''];
+  cats.forEach(cat => {
+    const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+    lines.push(`[ ${label.toUpperCase()} ]`);
+    data[cat].forEach((item, i) => {
+      const id = itemId(cat, i);
+      const tick = state[id] ? '✓' : '○';
+      lines.push(`  ${tick} ${item}`);
+      if (notes[id]) lines.push(`      → ${notes[id]}`);
+    });
+    lines.push('');
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ams-trek-checklist.txt';
+  a.click();
+}
+
+// Init
+loadFromStorage();
+Object.keys(data).forEach(cat => buildList(cat));
+updateProgress();
+</script>
+</body>
+</html>
